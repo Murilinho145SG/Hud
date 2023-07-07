@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Carlito&display=swap');
 
+:root {
+    --bgColorPrimary: rgba(15, 15, 15, 0.6);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -26,7 +30,7 @@ body {
 .upLeft,
 .upRight {
     position: absolute;
-    background: rgba(15, 15, 15, 0.6);
+    background: var(--bgColorPrimary);
     top: 4%;
     border-radius: 1.875rem;
     display: flex;
@@ -52,7 +56,7 @@ body {
     width: .625rem;
     height: .625rem;
     border-radius: 50%;
-    background: #fff;
+    background: rgba(255, 255, 255, 1);
     transition: all 1s;
     margin-right: 0.5rem;
 }
@@ -60,7 +64,7 @@ body {
 .upRight .spacer {
     width: 0.1rem;
     height: 1rem;
-    background: #fff;
+    background: rgba(255, 255, 255, 1);
     display: flex;
     margin: 0 .5rem;
 }
@@ -71,72 +75,83 @@ body {
 
 .upLeft .streetName,
 .upRight .time {
-    color: #fff;
+    color: rgba(255, 255, 255, 1);
 }
 
-.cinto img {
-    width: 20px;
+.hud {
     position: absolute;
-    left: 83%;
-    top: 66%;
+    display: flex;
+    flex-direction: column;
+    right: 1.5%;
+    bottom: 4%;
 }
 
-#hud {
+.hud .info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud .info .item {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--bgColorPrimary);
+    display: flex;
+    overflow: hidden;
+    align-items: flex-end;
+}
+
+.hud .info .item:not(:last-child) {
+    margin-right: .7rem;
+}
+
+.hud .info .item .iconMask {
     position: absolute;
-    width: 190px;
-    height: 140px;
-    right: 1.4%;
-    bottom: 2.5%;
-}
-
-.item-hud {
-    width: 35px;
-    height: 35px;
-    border-radius: 5px;
-    float: left;
-    margin-left: 14px;
-    transform: rotate(-180deg);
-    background: rgb(15, 15, 15, 0.6);
-}
-
-.item2-hud {
     width: 100%;
-    height: 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hud .info .item .iconMask .ph-heart,
+.hud .info .item .iconMask .ph-shield,
+.hud .info .item .iconMask .ph-fork-knife,
+.hud .info .item .iconMask .ph-drop {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.hud .info .item .status {
+    width: 100%;
+    height: 100%;
     transition: all 1s;
-    border-radius: 5px;
 }
 
-.item-hud .far {
-    position: absolute;
-    width: 16px;
-    bottom: 29%;
-    left: 26%;
-    transform: rotate(-180deg);
+.hud .info .item#life .status {
+    background: rgba(191, 11, 59, 1);
 }
 
-.vida {
-    background: rgb(252, 56, 56);
+.hud .info .item#shield .status {
+    background: rgba(50, 123, 168, 1);
 }
 
-.colete {
-    background: rgb(19, 95, 235);
+.hud .info .item#hunger .status {
+    background: rgba(186, 65, 22, 1);
 }
 
-.fome {
-    background: rgb(214, 122, 16);
-}
-
-.sede {
-    background: rgb(16, 158, 214);
-}
-
-.stress {
-    background: rgb(226, 84, 255);
+.hud .info .item#thirst .status {
+    background: rgba(29, 156, 180, 1);
 }
 
 .velocimetro {
     width: 100%;
     height: 43%;
+}
+
+.cinto img {
+    width: 20px;
 }
 
 .speed {
@@ -151,11 +166,6 @@ body {
     font-size: 13px;
     margin-top: 1%;
     text-align: center;
-}
-
-.infos-player {
-    position: absolute;
-    top: 67%;
 }
 
 .fuelback {
@@ -175,14 +185,12 @@ body {
 }
 
 .cinto {
-    position: absolute;
     width: 15px;
     margin-top: -27.5%;
     margin-left: 87%;
 }
 
 .lock {
-    position: absolute;
     width: 13px;
     margin-top: -17%;
     margin-left: 87.5%;
@@ -194,8 +202,7 @@ body {
     clip-path: path(
         'M223.448477,218.666668Q195.793012,218.666668,142.837241,218.666668C89.881469,218.666668,82.108145,240.722757,59.759837,265.202592L53.448477,265.202592L56.492046,261.098522C78.840353,236.618687,86.613678,214.562598,139.569449,214.562598Q192.525221,214.562598,223.448477,214.562598L223.448477,218.666668Z'
     );
-    background-color: rgba(15, 15, 15, 0.6);
-    position: absolute;
+    background-color: var(--bgColorPrimary);
     top: -140%;
     left: -27%;
 }

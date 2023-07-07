@@ -1,17 +1,19 @@
 local Tunnel = module("vrp","lib/Tunnel")
 local Proxy = module("vrp","lib/Proxy")
 vRP = Proxy.getInterface("vRP")
-vSERVER = Tunnel.getInterface('wnHud')
+vSERVER = Tunnel.getInterface('ntHud')
 src = {}
-Tunnel.bindInterface('wnHud', src)
+Tunnel.bindInterface('ntHud', src)
 
 
 local sBuffer = {}
 local vBuffer = {}
-local CintoSeguranca = false
+local seatBelt = false
 local ExNoCarro = false
 local hunger = 100
 local thirst = 100
+local inCar = false
+local vehicle = {}
 
 RegisterNetEvent("statusFome")
 AddEventHandler("statusFome",function(number)
@@ -43,32 +45,47 @@ function GetTimeToDisplay()
 	return hour .. ":" .. minute
 end
 
-inCar = false
+Citizen.CreateThread(function()
+	RequestStreamedTextureDict("circlemap",false)
+	while not HasStreamedTextureDictLoaded("circlemap") do
+		Citizen.Wait(100)
+	end
+	AddReplaceTexture("platform:/textures/graphics","radarmasksm","circlemap","radarmasksm")
+	SetMinimapClipType(1)
+	SetMinimapComponentPosition("minimap","L","B",0.009,-0.0125,0.16,0.28)
+	SetMinimapComponentPosition("minimap_mask","L","B",0.155,0.12,0.080,0.15)
+	SetMinimapComponentPosition("minimap_blur","L","B",0.0095,0.015,0.229,0.311)
+end)
+
 Citizen.CreateThread(function()
 	while true do
-		local sleep = 300
 		local ped = PlayerPedId()
 		inCar = IsPedInAnyVehicle(ped, false)
 
-		if inCar then 
-			local x,y,z = table.unpack(GetEntityCoords(ped,false))
-			
-			vehicle = GetVehiclePedIsIn(ped, false)
-			local health = (GetEntityHealth(GetPlayerPed(-1))-100)/config_vida*100
-			local armour = GetPedArmour(ped)
-			local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(x,y,z))
-			SendNUIMessage({
-				action = "inCar",
-				streetName = streetName,
-				time = GetTimeToDisplay(),
-				health = health,
-				armour = armour,
-				hunger = parseInt(hunger),
-				thirst = parseInt(thirst),
-			})	
+		local x,y,z = table.unpack(GetEntityCoords(ped,false))
+		local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(x,y,z))
+		local life = (GetEntityHealth(GetPlayerPed(-1))-100)/config_vida*100
+		local shield = GetPedArmour(ped)
+
+		SendNUIMessage({
+			action = "update",
+			streetName = streetName,
+			time = GetTimeToDisplay(),
+			life = life,
+			shield = shield,
+			hunger = parseInt(hunger),
+			thirst = parseInt(thirst),
+		})
+
+		if not inCar then 
+			DisplayRadar(false)
+		else
+			vehicle = GetVehiclePedIsIn(ped,false)
+
+			DisplayRadar(true)
 		end
 
-		Citizen.Wait(sleep)	
+		Citizen.Wait(250)	
 	end
 end)
 
@@ -110,41 +127,6 @@ Citizen.CreateThread(function()
 	end
 end)
 
-Citizen.CreateThread(function()
-	while true do
-		local sleep = 250
-		if not inCar then 
-			DisplayRadar(false)
-					
-			local ped = PlayerPedId()
-			local health = (GetEntityHealth(GetPlayerPed(-1))-100)/config_vida*100
-			local armour = GetPedArmour(ped)
-			local x,y,z = table.unpack(GetEntityCoords(ped,false))
-			local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(x,y,z))
-
-			-- print(GetEntityHealth(ped))
-	
-
-			SendNUIMessage({
-				action = "update",
-				streetName = streetName,
-				time: GetTimeToDisplay(),
-				health = vida,
-				armour = armour,
-				hunger = parseInt(hunger),
-				thirst = parseInt(thirst),
-			})			
-
-		else
-			DisplayRadar(true)
-		end
-		Citizen.Wait(sleep)	
-	end
-end)
-
------------------------------------------------------------------------------------------------------------------------------------------
--- SEATBELT
------------------------------------------------------------------------------------------------------------------------------------------
 IsCar = function(veh)
 	local vc = GetVehicleClass(veh)
 	return (vc >= 0 and vc <= 7) or (vc >= 9 and vc <= 12) or (vc >= 17 and vc <= 20)
@@ -189,28 +171,11 @@ Citizen.CreateThread(function()
 	end
 end)
 
-RegisterCommand("cr",function(source,args)
-	local veh = GetVehiclePedIsIn(PlayerPedId(),false)
-	local maxspeed = GetVehicleMaxSpeed(GetEntityModel(veh))
-	local vehspeed = GetEntitySpeed(veh)*3.605936
-	if GetPedInVehicleSeat(veh,-1) == PlayerPedId() and math.ceil(vehspeed) >= 0 and GetEntityModel(veh) ~= -2076478498 and not IsEntityInAir(veh) then
-		if args[1] == nil then
-			SetEntityMaxSpeed(veh,maxspeed)
-			TriggerEvent("Notify","sucesso","Limitador de Velocidade desligado com sucesso.")
-		else
-			SetEntityMaxSpeed(veh,0.45*args[1]-0.45)
-			TriggerEvent("Notify","sucesso","Velocidade máxima travada em <b>"..args[1].." KM/H</b>.")
-		end
-	end
-end)
-
 RegisterCommand("hud",function(source,args)
 	SendNUIMessage({
 		action = "changeVisibility",
 	})
 end)
-
-
 
 
 alertmaxfome = false
@@ -246,6 +211,7 @@ alertsede = false
 
     end
 end)
+
 AddEventHandler("hud:talkingState", function(number)
     SendNUIMessage({action = "proximity", number = number})
 end)
@@ -254,7 +220,6 @@ RegisterNetEvent("hud:talknow")
 AddEventHandler("hud:talknow", function(boolean)
     SendNUIMessage({action = "talking", falando = boolean})
 end)
-
 
 RegisterNetEvent("hud:channel")
 AddEventHandler("hud:channel", function(text)
