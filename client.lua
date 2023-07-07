@@ -111,7 +111,7 @@ Citizen.CreateThread(function()
 
             vehicleNailRpm = 280 - math.ceil( math.ceil((rpm-2000) * 140) / 10000)
 			SendNUIMessage({
-				only = "updateSpeeda",
+				only = "updateSpeed",
 				speed = speed,
 				fuel = parseInt(fuel),
 				rpmnail = vehicleNailRpm,
