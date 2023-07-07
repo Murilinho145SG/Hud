@@ -121,14 +121,11 @@ Citizen.CreateThread(function()
 			local armour = GetPedArmour(ped)
 			local x,y,z = table.unpack(GetEntityCoords(ped,false))
 			local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(x,y,z))
-
-			-- print(GetEntityHealth(ped))
 	
-
 			SendNUIMessage({
 				action = "update",
 				streetName = streetName,
-				time: GetTimeToDisplay(),
+				time = GetTimeToDisplay(),
 				health = vida,
 				armour = armour,
 				hunger = parseInt(hunger),
@@ -136,7 +133,17 @@ Citizen.CreateThread(function()
 			})			
 
 		else
-			DisplayRadar(true)
+				RequestStreamedTextureDict("circlemap",false)
+				while not HasStreamedTextureDictLoaded("circlemap") do
+					Citizen.Wait(100)
+				end
+				AddReplaceTexture("platform:/textures/graphics","radarmasksm","circlemap","radarmasksm")
+				SetMinimapClipType(1)
+				SetMinimapComponentPosition("minimap","L","B",0.009,-0.0125,0.16,0.28)
+				SetMinimapComponentPosition("minimap_mask","L","B",0.155,0.12,0.080,0.15)
+				SetMinimapComponentPosition("minimap_blur","L","B",0.0095,0.015,0.229,0.311)
+				SetBigmapActive(false,false)
+				DisplayRadar(true)
 		end
 		Citizen.Wait(sleep)	
 	end
