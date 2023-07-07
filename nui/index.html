@@ -25,11 +25,11 @@
             ></span>
             <span class="spacer"></span>
             <i class="ph-bold ph-clock"></i>
-            <span class="time">13:00</span>
+            <span class="time">12:00</span>
         </div>
 
-        <div id="hud">
-            <div class="velocimetro">
+        <div class="hud">
+            <!-- <div class="velocimetro">
                 <div class="velocimetro2" style="display: none">
                     <div class="veloBar" clipPathUnits="objectBoundingBox">
                         <div class="veloFill"></div>
@@ -44,24 +44,32 @@
                     <img class="cinto" src="" alt="" />
                     <img class="lock" src="" alt="" />
                 </div>
-            </div>
+            </div> -->
 
-            <div class="infos-player">
-                <div class="item-hud" id="vidadiv">
-                    <i class="far fa-heart"></i>
-                    <div class="item2-hud vida" id="vida"></div>
+            <div class="info">
+                <div class="item" id="life">
+                    <div class="iconMask">
+                        <i class="ph-bold ph-heart"></i>
+                    </div>
+                    <div class="status"></div>
                 </div>
-                <div class="item-hud" id="coletediv">
-                    <i class="far fa-shield"></i>
-                    <div class="item2-hud colete" id="colete"></div>
+                <div class="item" id="shield">
+                    <div class="iconMask">
+                        <i class="ph-bold ph-shield"></i>
+                    </div>
+                    <div class="status"></div>
                 </div>
-                <div class="item-hud">
-                    <i class="far fa-cheeseburger"></i>
-                    <div class="item2-hud fome" id="fome"></div>
+                <div class="item" id="hunger">
+                    <div class="iconMask">
+                        <i class="ph-bold ph-fork-knife"></i>
+                    </div>
+                    <div class="status"></div>
                 </div>
-                <div class="item-hud">
-                    <i class="far fa-dewpoint"></i>
-                    <div class="item2-hud sede" id="sede"></div>
+                <div class="item" id="thirst">
+                    <div class="iconMask">
+                        <i class="ph-bold ph-drop"></i>
+                    </div>
+                    <div class="status"></div>
                 </div>
             </div>
         </div>

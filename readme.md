@@ -1,5 +1,8 @@
-##Lista de Comados
+# ntHud - FiveM
 
-- /cr (Limita Velocidade)
-- /eat (Regenera a Fome e Sede)
-- /hud (Tira a Hud da Tela)
+### Lembre de configurar a vida e a permissão de staff no arquivo /config/config.lua
+
+## Lista de Comados
+
+-   /eat (Regenera a Fome e Sede) - PRECISA DA PERMISSÃO DE STAFF
+-   /hud (Tira a Hud da Tela)
