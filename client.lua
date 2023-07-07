@@ -13,26 +13,11 @@ local ExNoCarro = false
 local hunger = 100
 local thirst = 100
 
-
------------------------------------------------------------------------------------------------------------------------------------------
--- ATIVAR/DESATIVAR FOME E SEDE
------------------------------------------------------------------------------------------------------------------------------------------
-local fomeSede = false
------------------------------------------------------------------------------------------------------------------------------------------
--- 
------------------------------------------------------------------------------------------------------------------------------------------
-
------------------------------------------------------------------------------------------------------------------------------------------
--- STATUSHUNGER
------------------------------------------------------------------------------------------------------------------------------------------
 RegisterNetEvent("statusFome")
 AddEventHandler("statusFome",function(number)
 	hunger = parseInt(number)
 end)
 
------------------------------------------------------------------------------------------------------------------------------------------
--- FOME
------------------------------------------------------------------------------------------------------------------------------------------
 RegisterNetEvent("statusSede")
 AddEventHandler("statusSede",function(number)
 	thirst = parseInt(number)
@@ -45,10 +30,7 @@ Citizen.CreateThread( function()
 	end
 end)
 
------------------------------------------------------------------------------------------------------------------------------------------
--- DATA E HORA
------------------------------------------------------------------------------------------------------------------------------------------
-function CalculateTimeToDisplay()
+function GetTimeToDisplay()
 	hour = GetClockHours()
 	minute = GetClockMinutes()
 	if hour <= 9 then
@@ -57,36 +39,8 @@ function CalculateTimeToDisplay()
 	if minute <= 9 then
 		minute = "0" .. minute
 	end
-end
 
-function CalculateDateToDisplay()
-	month = GetClockMonth()
-	dayOfMonth = GetClockDayOfMonth()
-	if month == 0 then
-		month = "Janeiro"
-	elseif month == 1 then
-		month = "Fevereiro"
-	elseif month == 2 then
-		month = "Março"
-	elseif month == 3 then
-		month = "Abril"
-	elseif month == 4 then
-		month = "Maio"
-	elseif month == 5 then
-		month = "Junho"
-	elseif month == 6 then
-		month = "Julho"
-	elseif month == 7 then
-		month = "Agosto"
-	elseif month == 8 then
-		month = "Setembro"
-	elseif month == 9 then
-		month = "Outubro"
-	elseif month == 10 then
-		month = "Novembro"
-	elseif month == 11 then
-		month = "Dezembro"
-	end
+	return hour .. ":" .. minute
 end
 
 inCar = false
@@ -100,26 +54,17 @@ Citizen.CreateThread(function()
 			local x,y,z = table.unpack(GetEntityCoords(ped,false))
 			
 			vehicle = GetVehiclePedIsIn(ped, false)
-			local vida = (GetEntityHealth(GetPlayerPed(-1))-100)/config_vida*100
+			local health = (GetEntityHealth(GetPlayerPed(-1))-100)/config_vida*100
 			local armour = GetPedArmour(ped)
-			CalculateTimeToDisplay()
-			CalculateDateToDisplay()
-			local stamina = 100 - GetPlayerSprintStaminaRemaining(PlayerId())
-			local street = GetStreetNameFromHashKey(GetStreetNameAtCoord(x,y,z))
+			local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(x,y,z))
 			SendNUIMessage({
 				action = "inCar",
-				health = vida,
-				street = street,
-				day = dayOfMonth, 
-				fomeSede = fomeSede,
-				month= month,
-				hour = hour,
-				minute = minute,
+				streetName = streetName,
+				time = GetTimeToDisplay(),
+				health = health,
 				armour = armour,
-				stamina = stamina,
-				logo = config_logo,
-				fome = parseInt(hunger),
-				sede = parseInt(thirst),
+				hunger = parseInt(hunger),
+				thirst = parseInt(thirst),
 			})	
 		end
 
@@ -152,7 +97,6 @@ Citizen.CreateThread(function()
 				only = "updateSpeed",
 				speed = speed,
 				fuel = parseInt(fuel),
-				fomeSede = fomeSede,
 				rpmnail = vehicleNailRpm,
 				fome = parseInt(hunger),
 				sede = parseInt(thirst),
@@ -172,33 +116,23 @@ Citizen.CreateThread(function()
 		if not inCar then 
 			DisplayRadar(false)
 					
-			CalculateTimeToDisplay()
-			CalculateDateToDisplay()
-
 			local ped = PlayerPedId()
-			local vida = (GetEntityHealth(GetPlayerPed(-1))-100)/config_vida*100
+			local health = (GetEntityHealth(GetPlayerPed(-1))-100)/config_vida*100
 			local armour = GetPedArmour(ped)
-			local stamina = 100 - GetPlayerSprintStaminaRemaining(PlayerId())
 			local x,y,z = table.unpack(GetEntityCoords(ped,false))
-			local street = GetStreetNameFromHashKey(GetStreetNameAtCoord(x,y,z))
+			local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(x,y,z))
 
 			-- print(GetEntityHealth(ped))
 	
 
 			SendNUIMessage({
 				action = "update",
+				streetName = streetName,
+				time: GetTimeToDisplay(),
 				health = vida,
-				day = dayOfMonth, 
-				month= month,
-				street = street,
-				fomeSede = fomeSede,
-				hour = hour,
-				minute = minute,
 				armour = armour,
-				logo = config_logo,
-				fome = parseInt(hunger),
-				sede = parseInt(thirst),
-				stamina = stamina
+				hunger = parseInt(hunger),
+				thirst = parseInt(thirst),
 			})			
 
 		else
@@ -271,8 +205,9 @@ RegisterCommand("cr",function(source,args)
 end)
 
 RegisterCommand("hud",function(source,args)
-    hudoff = not hudoff
-	SendNUIMessage({hudoff = hudoff})			
+	SendNUIMessage({
+		action = "changeVisibility",
+	})
 end)
 
 

@@ -15,9 +15,6 @@ end
 local vhunger = 0
 local vthirst = 0
 
----------------------------------------------------------
--- /EAT
----------------------------------------------------------
 RegisterCommand("eat",function(source,args,rawCommand)
     local user_id = vRP.getUserId(source)
     if vRP.hasPermission(user_id,"admin.permissao") then
